@@ -3,4 +3,5 @@
 
 -Ref
 CRAFT: https://github.com/clovaai/CRAFT-pytorch
+
 deep-text-recognition-benchmark: https://github.com/clovaai/deep-text-recognition-benchmark
