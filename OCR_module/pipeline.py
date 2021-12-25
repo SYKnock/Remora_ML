@@ -147,7 +147,7 @@ opt = argparse.Namespace(
     )
 
 net = CRAFT()
-net.load_state_dict(copyStateDict(torch.load(root+'/CRAFT/weights/craft_mlt_25k.pth')))
+net.load_state_dict(copyStateDict(torch.load(root+'/CRAFT/weights/craft_mlt_25k.pth'), map_location=device))
 net = net.cuda()
 
 net = torch.nn.DataParallel(net)
