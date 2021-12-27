@@ -1,24 +1,13 @@
-import sys
 import os
-import time
 import argparse
-import re
-import math
-import json
-import zipfile
 import cv2
 import numpy as np
-import matplotlib.pyplot as plt
 import functools as func
-import tqdm
 from PIL import Image
-from skimage import io
 from collections import OrderedDict
 
 import torch
-import torch.nn as nn
 import torch.backends.cudnn as cudnn
-import torch.nn.functional as F
 import torch.utils.data
 from torch.autograd import Variable
 
@@ -93,7 +82,7 @@ def predict(opt, imgs):
     model = torch.nn.DataParallel(model).to(device)
 
     # load model
-    model.load_state_dict(torch.load('dtr/TPS-ResNet-BiLSTM-Attn.pth', map_location=device))
+    model.load_state_dict(torch.load('dtr/weights/TPS-ResNet-BiLSTM-Attn.pth', map_location=device))
 
     # prepare data. two demo images from https://github.com/bgshih/crnn#run-demo
     AlignCollate_demo = AlignCollate(imgH=opt.imgH, imgW=opt.imgW, keep_ratio_with_pad=False)
@@ -147,7 +136,7 @@ opt = argparse.Namespace(
     )
 
 net = CRAFT()
-net.load_state_dict(copyStateDict(torch.load(root+'/CRAFT/weights/craft_mlt_25k.pth'), map_location=device))
+net.load_state_dict(copyStateDict(torch.load(root+'/CRAFT/weights/craft_mlt_25k.pth', map_location=device)))
 net = net.cuda()
 
 net = torch.nn.DataParallel(net)
@@ -164,7 +153,7 @@ for file in image_list:
     if file_extension != '.png':
         image_list.remove(file)
         
-#image_list.remove('.ipynb_checkpoints')
+
 image_list = sorted(image_list,key=lambda x: int(x[5:-4]))
 
 thredhold = 13

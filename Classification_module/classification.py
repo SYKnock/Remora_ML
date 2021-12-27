@@ -13,12 +13,10 @@
 # ---
 
 # +
-import numpy as np
 import os
-import transformers
+from model_remora import BertNewsCategoryClassifier
 from transformers import AutoTokenizer, AutoModel
 import torch
-from torch import nn
 root = os.getcwd()
 
 category = {0: 'ENTERTAINMENT',
@@ -44,49 +42,34 @@ def script_to_list():
     PATH = root + "/../OCR_module/predict_text.txt"
     file = open(PATH, mode='r')
     script = file.readlines()
-    
+
     cnt = 0
     total_len = len(script)
-    
+
     list_script = []
     tmp_str = ''
-    
+
     for line in script:
         if cnt != 0 and cnt != (total_len - 1):
             line = line.replace("\n", ". ")
             tmp_str += line
         cnt += 1
-    
+
     tmp_str = tmp_str[:-1]
     list_script.append(tmp_str)
     file.close()
-    
+
     return list_script
 
 
-# classfier model
-class TextClassifier(nn.Module):
-    def __init__(self, num_labels, BERT, _dropout = 0.3):
-        super(TextClassifier, self).__init__()
-        self.num_labels = num_labels
-        self.bert = BERT
-        self.drop = nn.Dropout(_dropout)
-        self.classifier = nn.Linear(BERT.config.hidden_size, num_labels)
-        
-    def forward(self, input_ids, attention_mask, labels = None):
-        pooled_output = self.bert(input_ids = input_ids, attention_mask = attention_mask)
-        output = self.drop(pooled_output[0][:, 0, :])
-        return self.classifier(output)
-
-
 def inference(texts, bert, tokenizer):
-    PATH = "./weights/classification.pth"
-    model = TextClassifier(16, bert, 0.4)
+    PATH = root + "/weights/classification.pth"
+    model = BertNewsCategoryClassifier(len(category), bert, 0.4)
     model.load_state_dict(torch.load(PATH))
     model.eval()
 
     orig_token = tokenizer(texts, add_special_tokens=True,
-                           max_length=256, return_token_type_ids=False,
+                           max_length=128, return_token_type_ids=False,
                            padding='max_length', return_attention_mask=True,
                            truncation=True, return_tensors='pt')
 
@@ -104,14 +87,15 @@ def main():
     bert = AutoModel.from_pretrained('bert-base-uncased')
     tokenizer = AutoTokenizer.from_pretrained('bert-base-uncased')
     texts = script_to_list()
-    
+
     result = category[inference(texts, bert, tokenizer)]
-    
+
     PATH = root + "/category.txt"
     file = open(PATH, mode='w')
     file.write(result)
     file.close()
-    
+
+
 if __name__ == "__main__":
     main()
 # -
