@@ -3,4 +3,5 @@
 
 -Ref  
 CRAFT: https://github.com/clovaai/CRAFT-pytorch  
-deep-text-recognition-benchmark: https://github.com/clovaai/deep-text-recognition-benchmark
+deep-text-recognition-benchmark: https://github.com/clovaai/deep-text-recognition-benchmark  
+Classification model: https://github.com/samirsalman/BERT-NewsCategoryClassification
