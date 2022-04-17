@@ -12,7 +12,6 @@
 #     name: python3
 # ---
 
-# +
 import torch
 from torch import nn
 import model_remora
@@ -21,10 +20,8 @@ from transformers import AutoTokenizer, AutoModel
 from transformers import get_linear_schedule_with_warmup
 from adamp import AdamP
 import argparse
-# -
 
 
-# +
 def train_parameter_set(model, train_len, EPOCHS, device):
     parameter = model.parameters()
     optimizer = AdamP(parameter, lr=2e-5, betas=(0.9, 0.999), weight_decay=1e-2)
@@ -38,19 +35,16 @@ def train_parameter_set(model, train_len, EPOCHS, device):
     loss_function = nn.CrossEntropyLoss().to(device)
 
     return optimizer, scheduler, loss_function
-# -
 
 
-# +
 def test_and_save(model, test_dataloader, device, PATH):
     test_accuracy = model_remora.evaluation(model, test_dataloader, device)
     print("\nTest Accuracy: {0}".format(test_accuracy))
 
     torch.save(model.state_dict(), PATH)
-# -
 
 
-# +    
+# +
 def main():
     parser = argparse.ArgumentParser(description='PATH, EPOCHS, BATCH_SIZE, MAX_LEN, SAVE_PATH')
     parser.add_argument('--EPOCHS', type=int, default=10, help='')
@@ -92,4 +86,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-# -

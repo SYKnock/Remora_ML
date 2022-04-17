@@ -33,6 +33,7 @@ def copyStateDict(state_dict):
         new_state_dict[name] = v
     return new_state_dict
 
+
 def compare(x, y):
     check_line = abs(x[1] - y[1])
     if check_line < 15:
@@ -40,6 +41,7 @@ def compare(x, y):
     else:
         return x[1] - y[1]
     
+
 def test_net(net, image, text_threshold, link_threshold, low_text, cuda, poly):
     # resize
     img_resized, target_ratio, size_heatmap = imgproc.resize_aspect_ratio(image, 1280, interpolation=cv2.INTER_LINEAR, mag_ratio=1.5)
@@ -72,6 +74,7 @@ def test_net(net, image, text_threshold, link_threshold, low_text, cuda, poly):
             polys[k] = boxes[k]
 
     return boxes, polys
+
 
 def predict(opt, imgs):
     opt.batch_size = len(imgs)
@@ -136,7 +139,7 @@ opt = argparse.Namespace(
     )
 
 net = CRAFT()
-net.load_state_dict(copyStateDict(torch.load(root+'/CRAFT/weights/craft_mlt_25k.pth', map_location=device)))
+net.load_state_dict(copyStateDict(torch.load(root + '/CRAFT/weights/craft_mlt_25k.pth', map_location=device)))
 net = net.cuda()
 
 net = torch.nn.DataParallel(net)
@@ -144,30 +147,30 @@ cudnn.benchmark = False
 
 net.eval()
 
-f = open(root+'/predict_text.txt','w')
+f = open(root + '/predict_text.txt', 'w')
 f.close()
 
-image_list = os.listdir(root+'/frames')
+image_list = os.listdir(root + '/frames')
 for file in image_list:
     file_name, file_extension = os.path.splitext(file)
     if file_extension != '.png':
         image_list.remove(file)
         
 
-image_list = sorted(image_list,key=lambda x: int(x[5:-4]))
+image_list = sorted(image_list, key=lambda x: int(x[5:-4]))
 
 thredhold = 13
 pred_text = []
 
 for image_path in image_list:
     try:
-        image = imgproc.loadImage(root+'/frames/'+image_path)
+        image = imgproc.loadImage(root + '/frames/' + image_path)
     except:
         continue
     if not(type(image) is np.ndarray):
         continue
     
-    boxes, polys = test_net(net=net,image=image,text_threshold=0.7,link_threshold=0.4,low_text=0.4,cuda=True,poly=False)
+    boxes, polys = test_net(net=net, image=image, text_threshold=0.7, link_threshold=0.4, low_text=0.4, cuda=True, poly=False)
 
     pos = []
 
@@ -177,7 +180,7 @@ for image_path in image_list:
         x2 = int(max(poly[:, 0]))
         y2 = int(max(poly[:, 1]))
 
-        if y2-y1>=thredhold:
+        if y2 - y1 >= thredhold:
             pos.append([x1, y1, x2, y2])
 
     height = image.shape[0]
@@ -188,16 +191,16 @@ for image_path in image_list:
     # 박스를 왼쪽에서 오른쪽으로, 위에서 아래로 정렬
     sorted_pos = sorted(pos, key=func.cmp_to_key(compare))
 
-    if len(sorted_pos)==0:
+    if len(sorted_pos) == 0:
         continue
 
     imgs = []
 
     for p in sorted_pos:
-        img = image[p[1]:p[3],p[0]:p[2]]
+        img = image[p[1]:p[3], p[0]:p[2]]
         imgs.append(img)
 
-    pred_text.append(predict(opt,imgs))
+    pred_text.append(predict(opt, imgs))
 
 sentences = []
 for texts in pred_text:
@@ -215,22 +218,22 @@ scores = np.array([])
 
 for s in sentences:
     s_np = np.array(list(s))
-    len_list = len(s_np)-list(s_np).count(' ')-list(s_np).count('\n')
-    score = (np.frombuffer(s_np,'uint8').sum()-(ord('a')*len_list))
+    len_list = len(s_np) - list(s_np).count(' ') - list(s_np).count('\n')
+    score = (np.frombuffer(s_np, 'uint8').sum() - (ord('a') * len_list))
 
     if (abs(score - pre) > 150):
-        if pre !=-1000:
-            texts.append(text[np.argmin(abs(scores-scores.mean()))])
+        if pre != -1000:
+            texts.append(text[np.argmin(abs(scores - scores.mean()))])
         text = np.array([s])
         scores = np.array([score])
         pre = score
     else:
-        text = np.append(text,s)
-        scores = np.append(scores,score)
+        text = np.append(text, s)
+        scores = np.append(scores, score)
 
-texts.append(text[np.argmin(abs(scores-scores.mean()))])
+texts.append(text[np.argmin(abs(scores - scores.mean()))])
 
-with open(root+'/predict_text.txt','w') as f:
+with open(root + '/predict_text.txt', 'w') as f:
     for text in texts:
         f.write(text)
 
