@@ -1,10 +1,10 @@
 import torch
-from model_remora_KOR import KoBERTClassifier
+from train.model_remora_KOR import KoBERTClassifier
 from kobert.utils import get_tokenizer
 from kobert.pytorch_kobert import get_pytorch_kobert_model
 import gluonnlp as nlp
 import os
-from data_remora_KOR import BERTDataset
+from train.data_remora_KOR import BERTDataset
 from torch.utils.data import DataLoader
 
 root = os.getcwd()
@@ -80,7 +80,7 @@ def classification(PATH):
     script_to_tsv(PATH)
     result = inference(bert, tokenizer, vocab, device, model, batch_size, max_len)
 
-    PATH = root + "/category.txt"
+    PATH = root + "/classification_result.txt"
     file = open(PATH, mode='w')
     file.write(category[result])
     file.close()

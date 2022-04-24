@@ -14,7 +14,7 @@
 
 # +
 import os
-from model_remora_EN import BertNewsCategoryClassifier
+from train.model_remora_EN import BertNewsCategoryClassifier
 from transformers import AutoTokenizer, AutoModel
 import torch
 root = os.getcwd()
@@ -89,7 +89,7 @@ def classification(PATH):
 
     result = category[inference(texts, bert, tokenizer)]
 
-    PATH = root + "/category.txt"
+    PATH = root + "/classification_result.txt"
     file = open(PATH, mode='w')
     file.write(result)
     file.close()
