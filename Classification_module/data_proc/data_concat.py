@@ -14,7 +14,7 @@ def main(files):
     delete_list = []
     for idx in main_df.index:
         check = main_df.loc[idx, 'Category']
-        if check != 0 and check != 1 and check != 2 and check != 3 and check != 4 and check != 5:
+        if check != 0 and check != 1 and check != 2 and check != 3 and check != 4 and check != 5 and check != 6:
             delete_list.append(idx)
     
     main_df = main_df.drop(delete_list)
