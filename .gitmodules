@@ -1,9 +1,6 @@
 [submodule "OCR_module/OCR_module/deep-text-recognition-benchmark"]
 	path = OCR_module/OCR_module/deep-text-recognition-benchmark
 	url = https://github.com/clovaai/deep-text-recognition-benchmark
-[submodule "OCR_module/deep-text-recognition-benchmark"]
-	path = OCR_module/deep-text-recognition-benchmark
-	url = https://github.com/clovaai/deep-text-recognition-benchmark
 [submodule "OCR_module/CRAFT-pytorch"]
 	path = OCR_module/CRAFT-pytorch
 	url = https://github.com/clovaai/CRAFT-pytorch
