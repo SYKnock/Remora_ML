@@ -14,8 +14,8 @@
 
 import torch
 from torch import nn
-import model_remora
-import data_remora
+import model_remora_EN as model_remora
+import data_remora_EN as data_remora
 from transformers import AutoTokenizer, AutoModel
 from transformers import get_linear_schedule_with_warmup
 from adamp import AdamP

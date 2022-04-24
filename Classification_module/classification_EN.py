@@ -14,7 +14,7 @@
 
 # +
 import os
-from model_remora import BertNewsCategoryClassifier
+from model_remora_EN import BertNewsCategoryClassifier
 from transformers import AutoTokenizer, AutoModel
 import torch
 root = os.getcwd()
@@ -38,8 +38,7 @@ category = {0: 'ENTERTAINMENT',
 
 # -
 
-def script_to_list():
-    PATH = root + "/../OCR_module/predict_text.txt"
+def script_to_list(PATH):
     file = open(PATH, mode='r')
     script = file.readlines()
 
@@ -63,7 +62,7 @@ def script_to_list():
 
 
 def inference(texts, bert, tokenizer):
-    PATH = root + "/weights/classification.pth"
+    PATH = root + "/weights/classification_EN.pth"
     model = BertNewsCategoryClassifier(len(category), bert, 0.4)
     model.load_state_dict(torch.load(PATH))
     model.eval()
@@ -83,10 +82,10 @@ def inference(texts, bert, tokenizer):
 
 
 # +
-def main():
+def classification(PATH):
     bert = AutoModel.from_pretrained('bert-base-uncased')
     tokenizer = AutoTokenizer.from_pretrained('bert-base-uncased')
-    texts = script_to_list()
+    texts = script_to_list(PATH)
 
     result = category[inference(texts, bert, tokenizer)]
 
@@ -94,10 +93,4 @@ def main():
     file = open(PATH, mode='w')
     file.write(result)
     file.close()
-
-
-if __name__ == "__main__":
-    main()
-# -
-
 

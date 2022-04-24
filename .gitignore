@@ -128,5 +128,18 @@ dmypy.json
 # Pyre type checker
 .pyre/
 
-# pth
+# model weight
 *.pth
+
+# data
+*.tsv
+*.json
+
+# result
+*.txt
+
+# data
+data/
+
+# weight
+weights/
